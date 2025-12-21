@@ -1,0 +1,18 @@
+1. lsblk
+2. lsblk -f
+3. fdisk /dev/loop0
+	n   → new partition
+	p  → primary
+	ENTER ENTER → accept defaults
+	w   → write
+4. partprobe
+5. mkdir /mnt/storage_lab
+
+6. mount /dev/loop0p1 /mnt/storage_lab
+
+7. mount | grep storage_lab
+8. cd /mnt/storage_lab
+ touch testfile
+ 	ls -li
+9: Superblock repair on the drive:
+	sudo fsck /dev/loop0p1
