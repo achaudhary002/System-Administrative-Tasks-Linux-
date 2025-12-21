@@ -4,8 +4,8 @@
 ---
 ## **1.Dummy Linux Storage Creation (Hardware->Kernel->Block->Partition->FileSystem->File)**
 **Dummy Linux Storage Creation** [Dummy Linux Storage Creation](./Dummy-Disk-Creation-Storage)  
-This project shows how to create dummy disk storage from files, attach it to the system as block device, create partitions, assign filesystems to it, mount it and finally write to the mounted directory. Similarly, it also explains how to successfully remove the physical drive from the User level to all the way to Hardware Level. The Documentation includes all the steps clearly. 
-Concepts: dd, df, lsblk, fdisk, fsck, lsblk, mkfs, losetup, mount, umount and others.
+### This project shows how to create dummy disk storage from files, attach it to the system as block device, create partitions, assign filesystems to it, mount it and finally write to the mounted directory. Similarly, it also explains how to successfully remove the physical drive from the User level to all the way to Hardware Level. The Documentation includes all the steps clearly. 
+### Concepts: dd, df, lsblk, fdisk, fsck, lsblk, mkfs, losetup, mount, umount and others.
 ---
 
 ## ⭐ Learn More on Next Steps:
