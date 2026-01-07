@@ -1,0 +1,89 @@
+1. Lab:
+Note: add absolute path to avoid failure
+
+Dummy file creation and attaching to the Linux machine:
+a. file creation:
+	 dd if=/dev/zero of=dummy.disk bs=1M count=100
+
+b. Attach the file to the available loop pool as a block device
+	sudo losetup --find --show /home/bhairav0001/filesystem_Lab/dummy.disk
+
+c. Create Partion (Optional)
+	sudo fdisk dummy.disk
+
+d. Create Filesystem (in my case .ext4) 
+	sudo mkfs.ext4 dummy.disk
+e. Create  Mount point:
+	sudo mkdir -p /mnt/dummy
+
+f. Mount the filesystem
+	sudo mount /absolute/path/to/dummy.disk /mnt/dummy
+
+g. Verify the output:
+	see loop: lsblk OR
+	see mount: mount |grep /mnt/dummy
+
+2. Make it Parmanent mount and readonly permission:
+
+a. Unmount the previously mount point:
+	sudo umount /mnt/dummy
+
+b. edit the /etc/fstab and add the following line
+	 /home/bhairav0001/filesystem_Lab/dummy.disk /mnt/dummy ext4 defaults,loop,ro 0 0
+
+c.  safe test
+	sudo mount -a
+
+d. save and reload the system daemon:
+	sudo systemctl daemon reload
+
+e. reboot the system and verify the output mounts:
+	sudo reboot
+	mount |grep dummy
+
+
+3. Encryption With LUKS
+
+	a. Unmount the any mount if already existed (includes permanent)
+		- edit /etc/fstab file and comment the line that auto mounts the mount at boot
+		- sudo umount /mnt/dummy 
+	
+	b. Attach the file to BlOCK Device, remember the output
+		- sudo losetup --find --show /absolute/path/to/the/dummyfile
+	
+	c. Format the Block file to LuksFormat
+		- sudo cryptsetup luksFormat /dev/loop0
+	
+	d. Open the encrypted Container and name it to something
+		- sudo cryptsetup open /dev/loop0 dummy_encrypt
+	
+	e. Create A FileSystem of your choice
+		- sudo mkfs.ext4 /dev/mapper/dummy_encrypt
+	
+	f. 	mount it or add it on crypttab and fstab file
+		- # <target name> <source device>         <key file>      <options>
+		dummy_encrypt /home/bhairav0001/filesystem_Lab/dummy.disk none luks,loop
+    
+		- /etc/fstab
+			#parmanent filesystem added
+	 #/home/bhairav0001/filesystem_Lab/dummy.disk /mnt/dummy ext4 defaults,loop,ro 0 0        ---> just Filesystem
+	/dev/mapper/dummy_encrypt /mnt/dummy ext4 ro,defaults,x-systemd.automount 0 0            ----->Encrypted FileSystem
+
+
+	g. daemon -reload, verify and reboot, : 
+		- sudo systemctl daemon-reload
+		- sudo reboot
+		- mount |grep dummy
+	h. Output must show autofs in the systemd-1 fs. 
+	i. On successful test:
+		Prompt asks for the passphrase and creates the mount point
+
+4. Break the FileSystem and Lock yourself out of the machine
+	a. remove the "x-systemd.automount" from options and change some letters to simulate error. 
+	b. close the open encryption if open using "sudo cryptsetup close /dev/mapper/dummy_encrypt"
+	c. system daemon-reload and reboot
+	d. Enter to enter emergency Shell
+	e.  Remount the FileSystem as Read Write: " mount -o remount,rw /"
+	f. fix the line and exit
+							1234
+
