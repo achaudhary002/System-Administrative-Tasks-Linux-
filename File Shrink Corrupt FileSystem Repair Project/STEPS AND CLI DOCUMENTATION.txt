@@ -1,0 +1,237 @@
+File Shrink Project CLI Commands by Aashish Chaudhary
+--------------------------------------------------->
+------------------------------------Disk Allocation And Mount to MountPoint1-------------------------------------
+
+1. Disk Allocation (Raw Storage):
+	sudo fallocate -l 4G fakedisk.img
+
+2. Attach to the block Storage:
+	sudo losetup --show --find fakedisk.img
+
+3. Enter to the parted shell (Partition Creation):
+	 sudo parted /dev/loop0
+	
+	inside the shell:
+	a. review and list commands:   help
+	b. create partition table:  mklabel msdos
+	c. create actual partition:  mkpart primary ext4 0% 100%
+	d. quit
+
+4. Update the Kernel Partition Table metadata
+	sudo partprobe /dev/loop0
+
+5. Create FS 
+	 sudo mkfs.ext4 /dev/loop0p1
+
+6. Verify: 
+	 lsblk, lsblk -f
+7. Mount:
+	sudo mount /dev/loop0p1 ../mountPoint1/
+8. Verify the FS space used:
+	 df -hT /dev/loop0p1
+-------------------------------------Shrink FS from 4G to 2G---------------------------------------------------------------------------------------------
+
+1. Unmount the FS
+	sudo umount /dev/loop0p1
+	mount | grep /dev/loop0p1
+
+2. Resize Partition to 2G
+	 check error if any inconsistencies
+		sudo e2fsck -f /dev/loop0p1
+	resize partition
+		sudo resize2fs /dev/loop0p1 2G
+
+3. Partition Shrink
+		sudo parted /dev/loop0
+		resizepart 1 50% --------------> endpoint, can be changed to 75,100%
+
+4. Partition Table Update
+		sudo partprobe /dev/loop0
+
+5. check error if any inconsistencies
+		sudo e2fsck -f /dev/loop0p1
+		finds  suberblock info mismatch 
+
+6. Partition FS issue
+		(fs has 524288 blocks but physical device has 524032)
+
+7. Troubleshooting
+		tried fixing through using previous backups info on 32768,
+	once fixed through resizing fs blocksize to physical dev block size. issue got solved
+			sudo resize2fs /dev/loop0p1 524032
+
+8. Assign FS
+		create fs again ext4, 
+		sudo mkfs.ext4 /dev/loop0p1
+
+9. Mount the filesystem and write a file in MountPoint1
+	sudo mount /dev/loop0p1 /home/bhairav0001/mountPoint1
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Trouble shooting:
+Corrupt FS:
+action:
+1. FS(4G)-------resized---2G 
+partition -----resized to 2G
+kernel partition table updated
+
+but when tried to mount:
+FS -- superblock says information mismatch .. it says block mismatch--- Device has less blocks than the FS assumed bLOCKS
+Troubleshooted:
+steps: 
+	first sudo 
+	block backup found out and tried to run fsck it didn't work
+	second
+	sudo e2fsck -f /dev/loop0p1
+
+
+resizing fs to the partition sized work
+
+sudo resize2fs /dev/loopop1 blocksnumber
+
+.. FS created and mounted to the mountpoint
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------grow ext4 from 2g to 3g and create xfs on remaining 1 G space ------------------------------------------------------------------------------------------------------------------
+1. unmount the Filesystem /dev/loop0p1
+	sudo umount /dev/loop0p1
+2. partition table change (resize part 1 from 2g to 3g )
+	sudo parted /dev/loop0p
+	resizepart 1 75%
+
+3. Create a new partition xfs  for remaining 1G
+	mkpart primary xfs 75% 100%
+
+4. update the partition table:
+	sudo partprobe /dev/loop0
+
+5. ext4 filesystem resized from 2G to 3G  and mounted to previous mountPoint1
+	sudo resize2fs /dev/loop0p1 3G
+	sudo mount /dev/loop0p1 /mountPoint1
+
+5. xfs file system created and mounted to new MountPoint2
+	sudo mkfs.xfs /dev/loop0p2 
+	sudo mount /dev/loop0p2 /mountPoint2           ---------> After Creating MountPoint2
+
+----------------------------------------------------------------------shrinking ext4 from 3g to 2g and increasing xfs partition 1g to 2g------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------
+1. unmount the ext4 FS
+	sudo umount /mountPoint1
+2. resize FS from 3G to 2G 
+	sudo e2fsck -fv /dev/loop0p1
+	sudo resize2fs /dev/loop0p1 2G
+
+3. resize partition table from 3G to 2G 
+	sudo parted /dev/loop0
+	print
+	 resizepart 1 50%
+
+4. tried resizing the same way as ext4 partition table
+	 resizepart 2 100%
+	error msg: Error: Can't have the end before the start! (start sector=6291456 length=-2097152)
+
+5. issue found: the starting block doesn't change. its unidirectional .. we can extend to the extending endpoints but not move the begining or startpoint blocks in the partition
+	 Can't have the end before the start! (start sector=6291456 length=-2097152)
+
+6. tried xfs_grow and other tools. but the move option was not available.
+		 sudo xfs_growfs mountPoint2
+
+7. so later I decided to backup data in xfs partition somewhere and change partition table with new starting point 
+		current xfs fs--- backup to new drive----- current partition delete-- and create new xfs in the partition-- restore the backup---
+
+8. FOR THIS I NEEDED A Separate place . for my case my root filesystem didnot have extra space. 
+		check storage size 
+		 lsblk -f
+
+9.that's why Added new storage for 5g to the system
+		
+10. once the raw storage was added.
+		verify : lsblk
+	output  look for drive /dev/sda or sdb
+
+11. Physical volume created out of it
+		sudo pvcreate /dev/sdb
+		sudo pvs
+
+12. vg extended
+		 sudo vgextend ubuntu-vg /dev/sdb
+		sudo vgs
+
+13. new lv created
+		sudo lvs
+		 sudo lvcreate  -L 5G -n new_LV ubuntu-vg
+
+14 new lv mounted to the /mnt/xfs_backup
+		sudo mkdir -P /mnt/xfs_backup
+		sudo mount /dev/ubuntu-vg/new_LV /mnt/xfs_backup/               ---note absolutepath for the lv
+
+	created fs into the newLv
+		 sudo mkfs.xfs /dev/ubuntu-vg/new_LV
+
+15 xfsdump installed
+		 sudo apt update && sudo apt install xfsdump
+		which xfsdump
+		which xfsrestore
+
+16. whole mountPoint2 was dumped in the dumpfile.
+		 sudo xfsdump -f  /mnt/xfs_backup/ /home/bhairav0001/mountPoint2
+	inside prompt: 
+		put label: "backup_xfs_jan12"
+		enter media label: "media1"
+
+17. Verify:
+		cd /mnt/xfs_backup
+		ls 
+---------------------------------------------------------------------------------------------------
+
+Once the backup was done, partition table removing and creating new partition begins.
+
+-------------------final  Partition delete and xfs restore-------------
+
+1. unmount the MountPoint for partition /dev/loop0p2
+
+	sudo umount /home/bhairav0001/mountPoint2
+
+2. remove xfs partition 2 and create new one 
+	sudo parted /dev/loop0
+	 mkpart primary xfs 50% 100%
+
+3. Update the Partition info in Kernel
+	sudo partprobe /dev/loop0
+
+4. Wipe off xfs filesystem and Create New xfs FileSystem
+	 sudo wipefs -a /dev/loop0p2
+	sudo mkfs.xfs -f /dev/loop0p2
+
+5. 	Mount the FS to the MountPoint2
+	 sudo mount /dev/loop0p2 mountPoint2
+	 df -hT mountPoint2
+
+6.  restore the xfs dump to the newly created FS
+	 sudo xfsrestore -f /mnt/xfs_backup/xfs_backupfile /home/bhairav0001/mountPoint2
+
+7. Verify:
+	cd /mount/point2 && cat filename
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

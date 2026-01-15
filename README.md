@@ -14,6 +14,10 @@
 ### Concepts: fstab, crypttab, dd, lsblk, losetup, cryptsetup, luks, mkfs, fdisk
 
 ---
+## **3. FileShrink, Corrupt Filesystem Repair Project (FS RESIZING AND CORRUPT FS Repair)**
+**FileSystem Resizing AND Repair Corrupt FS**[FileSystem Resizing](./File%20Shrink%20Corrupt%20FileSystem%20Repair%20Project/)
+###  This project demonstrates how to resize filesystem in Linux System safely. I have used ext4 and xfs filesystem for this purpose. While doing this lab, I have encountered multiple tools, issues and troubleshooted them. Each section has all the steps in detail, and along with this documentation, I have also added CLI command documentation, that has all the necessary steps and commands required for this project.
+### Concepts:  parted, partprobe, resize2fs, xfsdump, xfsrestore, e2fsck, fsck, losetup, and others.
 ## ⭐ Learn More on Next Steps:
 1. Clone the repository:
 
