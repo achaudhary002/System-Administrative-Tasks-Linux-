@@ -18,6 +18,12 @@
 **FileSystem Resizing AND Repair Corrupt FS**[FileSystem Resizing](./File%20Shrink%20Corrupt%20FileSystem%20Repair%20Project/)
 ###  This project demonstrates how to resize filesystem in Linux System safely. I have used ext4 and xfs filesystem for this purpose. While doing this lab, I have encountered multiple tools, issues and troubleshooted them. Each section has all the steps in detail, and along with this documentation, I have also added CLI command documentation, that has all the necessary steps and commands required for this project.
 ### Concepts:  parted, partprobe, resize2fs, xfsdump, xfsrestore, e2fsck, fsck, losetup, and others.
+
+---
+## **4. Network File Share Creation And Mount**
+**4. Network File Share Creation And Mount**[NFSCreation Lab](./NFSCreationAndMount/)
+### NFS or Network File Share is essential feature in linux where files or directories can be easily shared across multiple machines or network. In this lab, I have showed the base level way of creating a fileshare, and share it across the network.
+### Concepts: SysAdmin TAsks ( Network File Sharing Techniques and Tools like nfs-kernel-server, nfs-common, /etc/export file)
 ## ⭐ Learn More on Next Steps:
 1. Clone the repository:
 
