@@ -24,6 +24,15 @@
 **4. Network File Share Creation And Mount**[NFSCreation Lab](./NFSCreationAndMount/)
 ### NFS or Network File Share is essential feature in linux where files or directories can be easily shared across multiple machines or network. In this lab, I have showed the base level way of creating a fileshare, and share it across the network.
 ### Concepts: SysAdmin TAsks ( Network File Sharing Techniques and Tools like nfs-kernel-server, nfs-common, /etc/export file)
+
+---
+## **5. CIFS/SMB Share Creation And Mount (Samba and CIFS) **
+**5. CIFS/SMB Share Creation And Mount**[CIFS/SAMBA SHARE LAB](./CIFS_SMB_SHARE%20mount/)
+### Samba File share  Using SMB protocol is essential feature in linux where files or directories can be easily shared across multiple machines or network, in addition to the compatibility with crossplatform. In this lab, I created fileshare and mounted to the client using CIFS-UTILS.
+### Concepts: SysAdmin TAsks ( Use of Samba File Sharing Techniques and Tools like samba, sambacredentials, sambauser, cifs-utils)
+
+---
+
 ## ⭐ Learn More on Next Steps:
 1. Clone the repository:
 

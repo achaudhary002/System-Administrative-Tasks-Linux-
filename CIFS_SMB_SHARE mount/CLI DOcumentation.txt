@@ -1,0 +1,47 @@
+Server:
+
+1. Test Ping and create regular user for cifs_lab purpose:
+	ping -c 3 <ipaddress> 
+	sudo useradd -m cifsuser  
+	sudo passwd cifuser
+
+2. samba install
+	sudo apt install samba
+
+3. add user to samba user
+	 sudo smbpasswd -a cifsuser
+
+4. smb.conf file configuration
+	add this to the end of line
+	
+	[sambashare]
+	comment = Samba on Ubuntu
+	path = /home/<username>/sambashare
+	read only = no
+	browsable = yes
+	guest ok = yes
+
+5. daemon restart
+	sudo systemctl restart smbd
+
+
+
+Client:
+	sudo apt update & sudo apt install cfs-utils
+
+credential file creation
+	sudo nano /root/.smbcredentials
+	add:
+	username = samba username
+	password = password
+
+permission:
+	sudo chmod 600 /root/.smbcredentials
+mount:
+	sudo mount -t cifs //192.168.12.117/sambashare /mnt/cifs_share -o credentials=/root/.smbcredentials
+fstab mount:
+	//192.168.12.117/sambashare /mnt/cifs_share cifs credentials=/root/.smbcred,vers=3.0 0 0
+
+verify: 
+	mount |grep samba
+
