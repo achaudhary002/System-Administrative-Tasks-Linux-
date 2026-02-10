@@ -32,7 +32,11 @@
 ### Concepts: SysAdmin TAsks ( Use of Samba File Sharing Techniques and Tools like samba, sambacredentials, sambauser, cifs-utils)
 
 ---
+## **6. Cleanup Orphaned Users and Files Residue **
+**5.  Cleanup Orphaned Users and Files Residue**[Orphan Users Lab](./Cleanup%20Orphaned%20Users%20and%20Files/)
+### This Project is my created guide to work with orphaned users. The documentation simplifies the whole concepts and process into simple steps. The online community and resources often confuse new comers and beginners with their heavy technical jargons and buzz words leaving beginners clueless about the issue, when it can be put simple and easy for everyone to understand. In this lab, I have worked with my own system to find these orphaned users and files. I have been working on it for sometime now. Its easy to understand, once the document is understood, it will be far easy than before to look for what you need. Trust Me. 
 
+---
 ## ⭐ Learn More on Next Steps:
 1. Clone the repository:
 
