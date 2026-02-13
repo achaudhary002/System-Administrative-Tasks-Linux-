@@ -1,0 +1,35 @@
+Lab Created By Aashish Chaudhary
+
+Guide steps:
+	1. useradd:
+		sudo useradd -m username
+		sudo password username
+
+	2. add group:
+			sudo groupadd groupname
+			
+	3. add members to group:
+		sudo usermod -aG groupname username
+
+	4. create dir:
+		mkdir directory_name
+	5. create file:
+		cd directory_name
+		touch file.txt
+	
+	6. Verify:
+		cat /etc/passwd
+		cat /etc/group
+		ls -alh shared_dir
+	
+	7. Install acl tool:
+		sudo apt update and sudo apt install acl -y
+
+	8. set permissions for group to the dir
+		setfacl -m g:groupname:permissions /absolute/path/to/shared/dir
+
+	9. track permission issue:
+		namei -m /absolute/path/to/shared/dir
+
+	10. Verify:
+		login as the user in group and access the directory

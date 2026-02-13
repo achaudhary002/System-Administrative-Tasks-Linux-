@@ -33,8 +33,13 @@
 
 ---
 ## **6. Cleanup Orphaned Users and Files Residue **
-**5.  Cleanup Orphaned Users and Files Residue**[Orphan Users Lab](./Cleanup%20Orphaned%20Users%20and%20Files/)
+**6.  Cleanup Orphaned Users and Files Residue**[Orphan Users Lab](./Cleanup%20Orphaned%20Users%20and%20Files/)
 ### This Project is my created guide to work with orphaned users. The documentation simplifies the whole concepts and process into simple steps. The online community and resources often confuse new comers and beginners with their heavy technical jargons and buzz words leaving beginners clueless about the issue, when it can be put simple and easy for everyone to understand. In this lab, I have worked with my own system to find these orphaned users and files. I have been working on it for sometime now. Its easy to understand, once the document is understood, it will be far easy than before to look for what you need. Trust Me. 
+
+---
+## **7. Share Files from User's Private Home Directory Lab **
+**7.  Share Files from User's Private Home Directory to Anyone**[PrivateHomeShareLab](./Access_SharedFile_From_Someone's_Private_HomeDir/)
+### In this lab, I have demonstrated a share of directory or files from a user's private home directory to anyone in the particular group using 'acl' tool. I have also considered the permission rules accordingly to minimize the security risk to the sharing user's private directory. This is done from scratch. And this lab assumes the users and groups are already created before attempting this lab. If you have not, my CLI Documentation also shows quick command to do that as well. This is a part of my SysAdmin task list. I have tried keeping simple and easy, most importantly, as out of much technical jargons and acronyms as possible. I understand, this might be challenging for beginners. I have had this experience alot in the beginning, I still have it sometime. Thank you for reading out. 
 
 ---
 ## ⭐ Learn More on Next Steps:
