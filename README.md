@@ -41,6 +41,10 @@
 **7.  Share Files from User's Private Home Directory to Anyone**[PrivateHomeShareLab](./Access_SharedFile_From_Someone's_Private_HomeDir/)
 ### In this lab, I have demonstrated a share of directory or files from a user's private home directory to anyone in the particular group using 'acl' tool. I have also considered the permission rules accordingly to minimize the security risk to the sharing user's private directory. This is done from scratch. And this lab assumes the users and groups are already created before attempting this lab. If you have not, my CLI Documentation also shows quick command to do that as well. This is a part of my SysAdmin task list. I have tried keeping simple and easy, most importantly, as out of much technical jargons and acronyms as possible. I understand, this might be challenging for beginners. I have had this experience alot in the beginning, I still have it sometime. Thank you for reading out. 
 
+----
+## **7. Compile And Install from the Source **
+**7.  Compile And Install from the Source**[PrivateHomeShareLab](./CompileInstallFromSource/)
+### In this lab, I have simply shared my learning experiece while i WAS learning particularly this task. I had always wondered what does the task itself even mean. Well, feel free to learn this task easily from my documentation. I have used metaphor, my actual steps, It's easy to follow and understand what issues I encountered and how I TROUBLESHOOTED them.To attempt this, I assume you have some experience working with the machine. If not, it will be hard to understand it. If you are comfortable with terminal and some linux jargons, you can simply google the commands. While learning, it's hard to figure out what to do. I have simplified that in this documentation Thank you for reading out. 
 ---
 ## ⭐ Learn More on Next Steps:
 1. Clone the repository:
