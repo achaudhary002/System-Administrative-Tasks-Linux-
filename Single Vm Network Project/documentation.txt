@@ -1,0 +1,91 @@
+Project Documentation:
+Done bY: Aashish Chaudhary
+Date: 05/04/26
+
+Task: Setting up Static Route:
+Concept: Networking And Subnetting
+
+
+Setup: 1 VM (Simulated MULTIPLE Routers, and Created Static Route)
+
+Process: multiple Namespaces (each to simulate Router)
+
+Scenario: 
+		
+	172.16.0.10/24				 [172.16.0.1, 172.17.0.1]						172.17.0.10/24
+	 school --------ethernetlink---------router-----------ethernetlink--------hospital
+		
+		||				||				||					||				||
+		||				||				||					||				||
+	   \||/		       \||/			   \||/				   \||/			   \||/
+		\/				\/				\/					\/		        \/
+	(ns-school)----veth pair1-------(ns-router)----veth pair2------(ns-hospital)
+	
+	Final:
+	ns-school (veth-school)------------Veth Pair1 ----(veth-school-r)ns-router (veth-hospital-r)-------------(veth-hospital) ns-hospital
+	
+	
+	
+Working Process: 
+		1: Create Namespaces:
+			- sudo ip netns add ns-school
+			- sudo ip netns add ns-hospital
+			- sudo ip netns add ns-router
+			
+			verify:
+			- sudo ip netns list
+			
+		2: Create Veth links
+			- sudo ip link add veth-school type veth peer name veth-school-r
+			- sudo ip link add veth-hospital type veth peer name veth-hospital-r
+					
+		note: one end connects to destination and with '-r' connects to the central router in the topology
+					
+		3: Connect Veth links to Destination (what link connects to which router)
+					school ----router
+			sudo ip link set veth-school netns ns-school
+			sudo ip link set veth-school-r netns ns-router
+			
+					hospital ----router
+			sudo ip link set veth-hospital netns ns-hospital
+			sudo ip link set veth-hospital-r netns ns-router
+			
+		
+		4: Assign Ips 
+			ns-school router: 
+				sudo ip netns exec ns-school ip addr add 172.16.0.10/24 dev veth-school
+				sudo ip netns exec ns-school ip link set veth-school up
+				sudo ip netns exec ns-school ip link set lo up
+				
+			ns-hospital router: 
+				sudo ip netns exec ns-hospital ip addr add 172.17.0.10/24 dev veth-hospital
+				sudo ip netns exec ns-hospital ip link set veth-hospital up
+				sudo ip netns exec ns-hospital ip link set lo up
+				
+			ns-router router:
+				sudo ip netns exec ns-router ip addr add 172.16.0.1/24 dev veth-school-r
+				sudo ip netns exec ns-router ip addr add 172.17.0.1/24 dev veth-hospital-r
+				sudo ip netns exec ns-router ip link set veth-hospital-r up
+				sudo ip netns exec ns-router ip link set veth-school-r up
+				sudo ip netns exec ns-router ip link set lo up
+			
+			
+		5: Add Static Routes:
+			From ns-school to ns-hospital through ns-router:
+				sudo ip netns exec ns-school ip route add 172.17.0.0/24 via 172.16.0.1
+			
+			From  ns-hospital to ns-school through ns-router:
+				sudo ip netns exec ns-hospital ip route add 172.16.0.0/24 via 172.17.0.1
+		6: Enable Ip forwarding
+				sudo ip netns exec ns-router sysctl -w net.ipv4.ip_forward=1
+		
+		7: Testing:
+				sudo ip netns exec ns-school ping 172.17.0.1
+				sudo ip netns exec ns-hospital ping 172.16.0.1
+		8: Cleanup:
+				Delete namespaces: (Deleting namespaces deletes all the setttings configured within the namespace)
+				sudo ip netns del ns-school
+				sudo ip netns del ns-hospital
+				sudo ip netns del ns-router
+				
+				

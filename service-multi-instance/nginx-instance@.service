@@ -1,0 +1,19 @@
+[Unit]
+Description =Nginx Instance %i
+After =network.target
+
+[Service]
+Type =forking
+
+#
+ExecStart =/usr/sbin/nginx -c /etc/nginx-site%i/nginx.conf
+ExecReload =/usr/sbin/nginx -s reload -c /etc/nginx-site%i/nginx.conf
+ExecStop =/usr/sbin/nginx -s quit -c /etc/nginx-site%i/nginx.conf
+
+PIDFile =/run/nginx-site%i/nginx.pid
+
+Restart =always
+RestartSec =5
+
+[Install]
+WantedBy=multi-user.target

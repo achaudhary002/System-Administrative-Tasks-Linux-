@@ -45,6 +45,7 @@
 ## **7. Compile And Install from the Source **
 **7.  Compile And Install from the Source**[PrivateHomeShareLab](./CompileInstallFromSource/)
 ### In this lab, I have simply shared my learning experiece while i WAS learning particularly this task. I had always wondered what does the task itself even mean. Well, feel free to learn this task easily from my documentation. I have used metaphor, my actual steps, It's easy to follow and understand what issues I encountered and how I TROUBLESHOOTED them.To attempt this, I assume you have some experience working with the machine. If not, it will be hard to understand it. If you are comfortable with terminal and some linux jargons, you can simply google the commands. While learning, it's hard to figure out what to do. I have simplified that in this documentation Thank you for reading out. 
+## **8. Others....**
 ---
 ## ⭐ Learn More on Next Steps:
 1. Clone the repository:

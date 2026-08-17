@@ -1,0 +1,97 @@
+Patching Security Updates KNOWLEDGEBASE
+Created by Aashish Chaudhary 08/02/2026
+----------------------------------------------->
+Before you try on .. Keep following things in mind.
+1. take backup or snapshot of Linux VM
+2. try on test environment (sandbox or clone server)
+3. Most importantly, only security updates are most important.. they're the top.. rest can wait.
+
+The Whole "patch security updates" Skill is:
+1. know what to patch
+2. get tool
+3. tell it what to do
+4. confirm daily schedule is turned on
+5. Check if reboot required 
+6.if REBOOT REQUIRED yes what files /if no STEP 7 
+7. verify everything went smoothly
+8. Reconfigure and Fix Broken install (ONLY IF ISSUE IN STEP 7)
+
+Important files:
+		a. tells what to do: /etc/apt/apt.conf.d/50unattended-unattended-upgrades
+		b. AUTO UPGRADE ON /OFF :	/etc/apt/apt.conf.d/20auto-upgrades
+		c. reboot check file : /var/run/reboot-required
+		d. reboot asking files: /var/run/reboot-required.pkgs
+		e. log files : /var/log/unattended-upgrades/unattended-upgrades.log
+		f. if some issue: /var/log/unattended-upgrades/unattended-upgrades.dpkg.log
+
+
+------------------------------------------------------------------------------>
+Step1: Know what to update or patch:
+		figure out what's urgent, important or not so urgent.
+				Security FIX or Updates? ------>urgent
+				bug ?-------------->not urgent
+				updates ----------->not important
+		
+	---->update index..
+			sudo apt update
+			sudo apt list --upgradable |grep -i security
+
+Step2:Get Tool and Start it:
+		
+		sudo apt install unattended-upgrades
+		sudo dpkg-configure --priority=low unattended-upgrades   --->Enter YES When prompted ------>starts the tool
+		
+
+Step3: Tell it what to do:
+		file that controls behavior : /etc/apt/apt.conf.d/50unattended-unattended-upgrades
+		
+		sudo nano /etc/apt/apt.conf.d/50unattended-unattended-upgrades
+	--->comment out //  on rest and leave it only that says security 
+				Unattended-Upgrade::Allowed-Origins {
+							"${distro_id}:${distro_codename}";
+							"${distro_id}:${distro_codename}-security";
+        ...
+		
+	--->Additional addon is avoiding autoreboot.
+		same file.. scroll down ... find these commented lines if you're on Ubuntu24.04
+		UNCOMMENT AND CHANGE ACCORDINGLY.. 
+			Unattended-Upgrade::Automatic-Reboot "true";
+			Unattended-Upgrade::Automatic-Reboot-Time "03:00";
+
+Step4: Check daily schedule is turned on:
+	sudo cat /etc/apt/apt.conf.d/20auto-upgrades
+	
+	-->make sure its selected to on i.e. 1
+		APT::Periodic::Update-Package-Lists "1";
+		APT::Periodic::Unattended-Upgrade "1";
+		
+
+step5: Check if reboot required:	
+		sudo cat /var/run/reboot-required    
+				no reboot required : no OUTPUT
+				IF reboot required: says "SYSTEM RESTART REQUIRED"
+				
+				
+step 6: IF REBOOT REQUIRED (YES) -->what files
+		sudo cat /var/run/reboot-required.pkgs 
+			OUTPUTS:--->ANY FILES like glibc, kernel or ... more
+
+step 7:verify everything went smoothly
+		Check LOGs: 
+			cat /var/log/unattended-upgrades/unattended-upgrades.log
+				see if any error... if any error  check /var/log/unattended-upgrades/unattended-upgrades.dpkg.log
+				
+			--->	Look for 
+					Packages that will be upgraded: libssl3t64 tzdata distro-info-data
+					Writing dpkg log to /var/log/unattended-upgrades/unattended-upgrades-dpkg.log
+				
+			---->	sometimes interactive install fails. mine failed for tzdata package
+				
+				sudo dpkg-reconfigure pkgname
+
+step 8: This Step only if (previously failed install, fixed in Step7)
+		sudo apt --fix-broken install
+		
+		if output says: 0 everywhere.... you're good	
+				
+-------------------------------------------------------------------------------------------------------
